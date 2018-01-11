@@ -7,8 +7,8 @@
     "lint": "./node_modules/.bin/eslint src --fix",
     "build": "./node_modules/.bin/babel src -d dist",
     "build-dev": "./node_modules/.bin/babel src -d dist -w",
-    "copy-statics": "cpx \"./src/views/**/*\" ./dist/views",
-    "copy-statics-dev": "cpx \"./src/views/**/*\" ./dist/views --watch",
+    "copy-statics": "cpx \"./src/{views,static}/**/*\" ./dist",
+    "copy-statics-dev": "cpx \"./src/{views,static}/**/*\" ./dist --watch",
     "run-dev": "NODE_CONFIG_DIR=./src/config ./node_modules/.bin/nodemon ./dist/app.js"
   },
   "author": "Arpit Bhayani",

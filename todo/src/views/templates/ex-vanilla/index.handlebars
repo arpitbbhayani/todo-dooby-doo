@@ -1,7 +1,18 @@
 <div class="ui text container">
-    <form class="ui form" action="/vanilla/todos" method="POST">
-        <div class="ui fluid input input field">
+    <form class="ui form" action="/ex-vanilla/todos" method="POST">
+        <div class="ui fluid input field">
             <textarea rows="5" name="todo" placeholder="What do you want to do today?"></textarea>
+        </div>
+        <div class="ui three fields">
+            <div class="ui fluid input field">
+                <input type="text" name="tag1" placeholder="Tag" />
+            </div>
+            <div class="ui fluid input field">
+                <input type="text" name="tag2" placeholder="Tag" />
+            </div>
+            <div class="ui fluid input field">
+                <input type="text" name="tag3" placeholder="Tag" />
+            </div>
         </div>
         <div class="ui field">
             <div class="ui nospace borderless right aligned segment">
@@ -10,10 +21,10 @@
         </div>
     </form>
     <div class="ui secondary menu">
-        <a href="/vanilla" class="ui {{#if incomplete}}active{{/if}} item">
+        <a href="/ex-vanilla" class="ui {{#if incomplete}}active{{/if}} item">
             Todo
         </a>
-        <a href="/vanilla/completed" class="ui {{#if complete}}active{{/if}} item">
+        <a href="/ex-vanilla/completed" class="ui {{#if complete}}active{{/if}} item">
             Completed
         </a>
     </div>
@@ -21,7 +32,7 @@
         <div class="ui segment">
             <div class="ui right aligned nospace borderless segment">
                 {{#if this.is_complete}}
-                    <form class="ui form" method="POST" action="/vanilla/todos/{{this.id}}/incomplete">
+                    <form class="ui form" method="POST" action="/ex-vanilla/todos/{{this.id}}/incomplete">
                         <div class="ui field">
                             <button type="submit" class="ui mini button">
                                 Mark as Inomplete
@@ -29,7 +40,7 @@
                         </div>
                     </form>
                 {{else}}
-                    <form class="ui form" method="POST" action="/vanilla/todos/{{this.id}}/complete">
+                    <form class="ui form" method="POST" action="/ex-vanilla/todos/{{this.id}}/complete">
                         <div class="ui field">
                             <button type="submit" class="ui mini button">
                                 Mark as Complete
@@ -40,6 +51,11 @@
             </div>
             <div>{{this.todo}}</div>
             <div class="ui mini text">Posted on: {{this.created_at}}</div>
+            <div class="ui basic nospace segment">
+                {{#each this.tags}}
+                    <a href="/" class="ui basic small label">{{this}}</a>
+                {{/each}}
+            </div>
         </div>
     {{/each}}
 </div>

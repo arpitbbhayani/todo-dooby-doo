@@ -7,6 +7,7 @@ const typeDefs = `
         todo: String
         created_at: String
         is_complete: Boolean
+        tags: [String]
     }
 
     type Query {

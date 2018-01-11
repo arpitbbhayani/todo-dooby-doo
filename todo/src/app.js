@@ -11,7 +11,7 @@ const exWithGraphqlSchema = require('./ex-with-graphql/schema');
 const handlers = require('./handlers');
 
 const publicRoutes = require('./routes/public');
-const vanillaRoutes = require('./routes/ex-vanilla');
+const exVanillaRoutes = require('./routes/ex-vanilla');
 const exWithGrpahQLRoutes = require('./routes/ex-with-graphql');
 
 /* Handlebars */
@@ -29,7 +29,7 @@ app.use(require('cookie-parser')());
 
 function registerRoutes() {
     app.use('/', publicRoutes);
-    app.use('/vanilla', vanillaRoutes);
+    app.use('/ex-vanilla', exVanillaRoutes);
     app.use('/ex-with-graphql', exWithGrpahQLRoutes);
     app.use('/ex-with-graphql/api', bodyParser.json(), graphqlExpress({ schema: exWithGraphqlSchema }));
     app.use('/ex-with-graphql/graphiql', graphiqlExpress({ endpointURL: '/ex-with-graphql/api' }));

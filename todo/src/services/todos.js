@@ -7,6 +7,7 @@ function todoConverter(x) {
         todo: x.t,
         created_at: x.cra,
         is_complete: x.ic,
+        tags: x.tg,
     };
 }
 
@@ -23,6 +24,7 @@ function _create(todoDoc, callback) {
         t: todoDoc.t,
         cra: currentDate,
         ic: false,
+        tg: todoDoc.tg.filter(x => x),
     };
     mongo.getConnection((db) => {
         const todos = db.collection('todos');
