@@ -144,6 +144,28 @@ function _getAllDetailedByState(isComplete, callback) {
     });
 }
 
+function _getAllByTag(tagId, callback) {
+    const searchDoc = {
+        tg: {
+            $in: [tagId],
+        },
+    };
+    const projectionDoc = {
+    };
+    const orderDoc = {
+        cra: -1,
+    };
+    mongo.getConnection((db) => {
+        const todos = db.collection('todos');
+        todos.find(searchDoc, projectionDoc).sort(orderDoc).toArray((aerr, allTodos) => {
+            if (aerr) {
+                return callback(aerr, null);
+            }
+            return callback(null, toHuman(allTodos, todoConverter));
+        });
+    });
+}
+
 function _changeState(todoId, isComplete, callback) {
     const searchDoc = {
         _id: mongo.toObjectId(todoId),
@@ -221,6 +243,18 @@ module.exports = {
         }
         return new Promise((resolve, reject) => {
             _getAllDetailedByState(isComplete, (aerr, todos) => {
+                if (aerr) return reject(aerr);
+                return resolve(todos);
+            });
+        });
+    },
+
+    getAllByTag(tagId, callback) {
+        if (typeof callback === 'function') {
+            return _getAllByTag(tagId, callback);
+        }
+        return new Promise((resolve, reject) => {
+            _getAllByTag(tagId, (aerr, todos) => {
                 if (aerr) return reject(aerr);
                 return resolve(todos);
             });

@@ -5,7 +5,8 @@ const resolvers = {
     Query: {
         todos: (_, args) => todoService.getAllByState(args.is_complete),
         todo: (_, args) => todoService.getById(args.id),
-        tag: (_, args) => tagService.getById(args.id),
+        tagById: (_, args) => tagService.getById(args.id),
+        tagByName: (_, args) => tagService.getByName(args.name),
         tags: () => tagService.getAll(),
     },
     Mutation: {
@@ -19,6 +20,9 @@ const resolvers = {
     },
     Todo: {
         tags: todo => todo.tags.map(t => tagService.getById(t)),
+    },
+    Tag: {
+        todos: tag => todoService.getAllByTag(tag.id),
     },
 };
 

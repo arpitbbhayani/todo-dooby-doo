@@ -55,6 +55,25 @@ function _getById(tagId, callback) {
     });
 }
 
+function _getByName(name, callback) {
+    const searchDoc = {
+        n: mongo.toObjectId(name),
+    };
+    const projectionDoc = {};
+    mongo.getConnection((db) => {
+        const tags = db.collection('tags');
+        tags.findOne(searchDoc, projectionDoc, (aerr, tag) => {
+            if (aerr) {
+                return callback(aerr, null);
+            }
+            if (!tag) {
+                return callback(new Error(`Tag with name ${name} does not exist`), null);
+            }
+            return callback(null, toHuman(tag, tagConverter));
+        });
+    });
+}
+
 function _getAll(callback) {
     const searchDoc = {};
     const projectionDoc = {};
@@ -88,6 +107,18 @@ module.exports = {
         }
         return new Promise((resolve, reject) => {
             _getById(tagId, (aerr, tag) => {
+                if (aerr) return reject(aerr);
+                return resolve(tag);
+            });
+        });
+    },
+
+    getByName(name, callback) {
+        if (typeof callback === 'function') {
+            return _getByName(name, callback);
+        }
+        return new Promise((resolve, reject) => {
+            _getByName(name, (aerr, tag) => {
                 if (aerr) return reject(aerr);
                 return resolve(tag);
             });

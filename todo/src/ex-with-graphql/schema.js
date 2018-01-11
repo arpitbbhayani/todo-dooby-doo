@@ -6,6 +6,7 @@ const typeDefs = `
         id: String
         name: String
         color: String
+        todos: [Todo]
     }
 
     type Todo {
@@ -20,11 +21,13 @@ const typeDefs = `
         todos(is_complete: Boolean!, limit: Int): [Todo]
         todo(id: String): Todo
         tags: [Tag]
-        tag(id: String): [Tag]
+        tagById(id: String): Tag
+        tagByName(name: String): Tag
     }
 
     type Mutation {
         createTodo(todo: String!, tags: [String]): Todo
+        createTag(name: String!, color: String): Tag
     }
 `;
 
