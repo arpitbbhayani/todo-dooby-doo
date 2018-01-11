@@ -18,19 +18,23 @@ router.get('/', (req, res, next) => {
     }).catch(aerr => next(aerr));
 });
 
+router.get('/completed', (req, res, next) => {
+    Promise.all([
+        todoService.getAllDetailedByState(true),
+        tagService.getAll(),
+    ]).then(([todos, tags]) => {
+        res.render('ex-vanilla/index', {
+            todos,
+            tags,
+            incomplete: true,
+        });
+    }).catch(aerr => next(aerr));
+});
+
 router.get('/tags', (req, res, next) => {
     tagService.getAll()
         .then(tags => res.render('ex-vanilla/tags', {
             tags,
-        }))
-        .catch(aerr => next(aerr));
-});
-
-router.get('/completed', (req, res, next) => {
-    todoService.getAllByState(true)
-        .then(todos => res.render('ex-vanilla/index', {
-            todos,
-            complete: true,
         }))
         .catch(aerr => next(aerr));
 });
