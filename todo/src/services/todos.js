@@ -147,7 +147,7 @@ function _getAllDetailedByState(isComplete, callback) {
 function _getAllByTag(tagId, callback) {
     const searchDoc = {
         tg: {
-            $in: [tagId],
+            $in: [mongo.toObjectId(tagId)],
         },
     };
     const projectionDoc = {
@@ -162,6 +162,40 @@ function _getAllByTag(tagId, callback) {
                 return callback(aerr, null);
             }
             return callback(null, toHuman(allTodos, todoConverter));
+        });
+    });
+}
+
+function _getAllDetailedByTag(tagId, callback) {
+    const searchDoc = {
+        tg: {
+            $in: [mongo.toObjectId(tagId)],
+        },
+    };
+    const projectionDoc = {
+    };
+    const orderDoc = {
+        cra: -1,
+    };
+    mongo.getConnection((db) => {
+        const todos = db.collection('todos');
+        todos.find(searchDoc, projectionDoc).sort(orderDoc).toArray((aerr, allTodos) => {
+            if (aerr) {
+                return callback(aerr, null);
+            }
+            const tagsToFetch = Array.from(new Set([].concat(...allTodos.map(t => t.tg))));
+            return Promise.all(tagsToFetch.map(t => tagService.getById(t)))
+                .then((tagsDetailsArray) => {
+                    const tagsDetailMap = {};
+                    for (let i = 0; i < tagsDetailsArray.length; i += 1) {
+                        tagsDetailMap[tagsDetailsArray[i].id] = tagsDetailsArray[i];
+                    }
+                    const allTodosWithDetails = allTodos.map(t => ({
+                        ...t,
+                        tg: t.tg.map(x => tagsDetailMap[x]),
+                    }));
+                    return callback(null, toHuman(allTodosWithDetails, todoConverter));
+                }).catch(berr => callback(berr, null));
         });
     });
 }
@@ -255,6 +289,18 @@ module.exports = {
         }
         return new Promise((resolve, reject) => {
             _getAllByTag(tagId, (aerr, todos) => {
+                if (aerr) return reject(aerr);
+                return resolve(todos);
+            });
+        });
+    },
+
+    getAllDetailedByTag(tagId, callback) {
+        if (typeof callback === 'function') {
+            return _getAllDetailedByTag(tagId, callback);
+        }
+        return new Promise((resolve, reject) => {
+            _getAllDetailedByTag(tagId, (aerr, todos) => {
                 if (aerr) return reject(aerr);
                 return resolve(todos);
             });

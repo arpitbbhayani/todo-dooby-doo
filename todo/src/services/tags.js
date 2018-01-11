@@ -19,7 +19,7 @@ function toHuman(obj, fn) {
 function _create(tagDoc, callback) {
     const insertDoc = {
         n: tagDoc.n,
-        c: tagDoc.c || 'grey',
+        c: tagDoc.c || '#000',
     };
     mongo.getConnection((db) => {
         const tags = db.collection('tags');
@@ -50,6 +50,26 @@ function _getById(tagId, callback) {
             if (!tag) {
                 return callback(new Error(`Tag with id ${tagId} does not exist`), null);
             }
+            return callback(null, toHuman(tag, tagConverter));
+        });
+    });
+}
+
+function _getByIdDetailed(tagId, callback) {
+    const searchDoc = {
+        _id: mongo.toObjectId(tagId),
+    };
+    const projectionDoc = {};
+    mongo.getConnection((db) => {
+        const tags = db.collection('tags');
+        tags.findOne(searchDoc, projectionDoc, (aerr, tag) => {
+            if (aerr) {
+                return callback(aerr, null);
+            }
+            if (!tag) {
+                return callback(new Error(`Tag with id ${tagId} does not exist`), null);
+            }
+
             return callback(null, toHuman(tag, tagConverter));
         });
     });
@@ -107,6 +127,18 @@ module.exports = {
         }
         return new Promise((resolve, reject) => {
             _getById(tagId, (aerr, tag) => {
+                if (aerr) return reject(aerr);
+                return resolve(tag);
+            });
+        });
+    },
+
+    getByIdDetailed(tagId, callback) {
+        if (typeof callback === 'function') {
+            return _getByIdDetailed(tagId, callback);
+        }
+        return new Promise((resolve, reject) => {
+            _getByIdDetailed(tagId, (aerr, tag) => {
                 if (aerr) return reject(aerr);
                 return resolve(tag);
             });

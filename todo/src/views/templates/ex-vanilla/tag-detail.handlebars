@@ -1,0 +1,9 @@
+<div class="ui text container">
+    <div class="ui header">
+        <span class="ui label" style="background-color: {{tag.color}}"> &nbsp; </span> {{tag.name}}
+    </div>
+    <div class="ui hidden spacious divider"></div>
+    {{#each tag.todos}}
+        {{> todo-preview todo=this}}
+    {{/each}}
+</div>

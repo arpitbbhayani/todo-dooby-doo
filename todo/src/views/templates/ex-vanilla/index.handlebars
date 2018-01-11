@@ -65,32 +65,6 @@
         </a>
     </div>
     {{#each todos}}
-        <div class="ui segment">
-            <p>{{this.todo}}</p>
-            <div class="ui basic nospace segment">
-                {{#each this.tags}}
-                    <a href="/" class="ui basic small label" style="color: white; background-color: {{this.color}}">{{this.name}}</a>
-                {{/each}}
-            </div>
-            <div class="ui right aligned nospace borderless segment">
-                {{#if this.is_complete}}
-                    <form class="ui form" method="POST" action="/ex-vanilla/todos/{{this.id}}/incomplete">
-                        <div class="ui field">
-                            <button type="submit" class="ui mini button">
-                                Mark as Inomplete
-                            </button>
-                        </div>
-                    </form>
-                {{else}}
-                    <form class="ui form" method="POST" action="/ex-vanilla/todos/{{this.id}}/complete">
-                        <div class="ui field">
-                            <button type="submit" class="ui mini button">
-                                Mark as Complete
-                            </button>
-                        </div>
-                    </form>
-                {{/if}}
-            </div>
-        </div>
+        {{> todo-preview todo=this}}
     {{/each}}
 </div>

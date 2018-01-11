@@ -39,6 +39,22 @@ router.get('/tags', (req, res, next) => {
         .catch(aerr => next(aerr));
 });
 
+router.get('/tags/:tagId', (req, res, next) => {
+    const { tagId } = req.params;
+    Promise.all([
+        tagService.getByIdDetailed(tagId),
+        todoService.getAllDetailedByTag(tagId),
+    ]).then(([tag, todos]) => {
+        const tagDetailed = {
+            ...tag,
+            todos,
+        };
+        res.render('ex-vanilla/tag-detail', {
+            tag: tagDetailed,
+        });
+    }).catch(aerr => next(aerr));
+});
+
 router.post('/todos', (req, res, next) => {
     const { todo } = req.body;
     const { tag1, tag2, tag3 } = req.body;
