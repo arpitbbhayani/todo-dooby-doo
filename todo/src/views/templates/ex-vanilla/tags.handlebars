@@ -1,0 +1,23 @@
+<div class="ui text container">
+    <form class="ui form" action="/ex-vanilla/tags" method="POST">
+        <div class="ui field">
+            <label>Name</label>
+            <input type="text" name="name" placeholder="Name" />
+        </div>
+        <div class="ui field">
+            <label>Color (Hex Code)</label>
+            <input type="text" name="color" placeholder="Color Hex Code" />
+        </div>
+        <div class="ui right aligned nospace basic segment">
+            <input type="submit" value="Create" class="ui primary button" />
+        </div>
+    </form>
+    {{#each tags}}
+        <div class="ui segment">
+            <p>
+                <span title="{{this.color}}" class="ui label" style="background-color: {{this.color}}"> &nbsp; </span>
+                {{this.name}}
+            </p>
+        </div>
+    {{/each}}
+</div>

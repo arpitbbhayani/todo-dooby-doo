@@ -1,17 +1,53 @@
 <div class="ui text container">
+    <div class="ui nospace right aligned basic segment">
+        <a href="/ex-vanilla/tags">Tags</a>
+    </div>
     <form class="ui form" action="/ex-vanilla/todos" method="POST">
         <div class="ui fluid input field">
             <textarea rows="5" name="todo" placeholder="What do you want to do today?"></textarea>
         </div>
         <div class="ui three fields">
-            <div class="ui fluid input field">
-                <input type="text" name="tag1" placeholder="Tag" />
+            <div class="ui fluid field">
+                <div class="ui selection dropdown">
+                    <input name="tag1" type="hidden">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Tag</div>
+                    <div class="menu">
+                        {{#each tags}}
+                        <div class="item" data-value="{{this.id}}">
+                            <span class="ui mini label" style="background-color: {{this.color}}"></span> {{this.name}}
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
             </div>
-            <div class="ui fluid input field">
-                <input type="text" name="tag2" placeholder="Tag" />
+            <div class="ui fluid field">
+                <div class="ui selection dropdown">
+                    <input name="tag2" type="hidden">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Tag</div>
+                    <div class="menu">
+                        {{#each tags}}
+                        <div class="item" data-value="{{this.id}}">
+                            <span class="ui mini label" style="background-color: {{this.color}}"></span> {{this.name}}
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
             </div>
-            <div class="ui fluid input field">
-                <input type="text" name="tag3" placeholder="Tag" />
+            <div class="ui fluid field">
+                <div class="ui selection dropdown">
+                    <input name="tag3" type="hidden">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Tag</div>
+                    <div class="menu">
+                        {{#each tags}}
+                        <div class="item" data-value="{{this.id}}">
+                            <span class="ui mini label" style="background-color: {{this.color}}"></span> {{this.name}}
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
             </div>
         </div>
         <div class="ui field">
@@ -30,6 +66,12 @@
     </div>
     {{#each todos}}
         <div class="ui segment">
+            <p>{{this.todo}}</p>
+            <div class="ui basic nospace segment">
+                {{#each this.tags}}
+                    <a href="/" class="ui basic small label">{{this}}</a>
+                {{/each}}
+            </div>
             <div class="ui right aligned nospace borderless segment">
                 {{#if this.is_complete}}
                     <form class="ui form" method="POST" action="/ex-vanilla/todos/{{this.id}}/incomplete">
@@ -48,13 +90,6 @@
                         </div>
                     </form>
                 {{/if}}
-            </div>
-            <div>{{this.todo}}</div>
-            <div class="ui mini text">Posted on: {{this.created_at}}</div>
-            <div class="ui basic nospace segment">
-                {{#each this.tags}}
-                    <a href="/" class="ui basic small label">{{this}}</a>
-                {{/each}}
             </div>
         </div>
     {{/each}}

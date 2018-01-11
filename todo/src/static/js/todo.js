@@ -12,4 +12,5 @@ function setupPostbox() {
 $(document).ready(() => {
     AEditor.emojifyInit();
     setupPostbox();
+    $('.ui.dropdown').dropdown();
 });
