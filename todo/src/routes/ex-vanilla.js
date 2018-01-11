@@ -7,7 +7,7 @@ module.exports = router;
 
 router.get('/', (req, res, next) => {
     Promise.all([
-        todoService.getAllByState(false),
+        todoService.getAllDetailedByState(false),
         tagService.getAll(),
     ]).then(([todos, tags]) => {
         res.render('ex-vanilla/index', {

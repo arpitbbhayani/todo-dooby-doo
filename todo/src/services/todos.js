@@ -60,6 +60,25 @@ function _getById(todoId, callback) {
             if (!todo) {
                 return callback(new Error(`todo for id ${todoId} does not exist`, null));
             }
+            return callback(null, toHuman(todo, todoConverter));
+        });
+    });
+}
+
+function _getByIdDetailed(todoId, callback) {
+    const searchDoc = {
+        _id: mongo.toObjectId(todoId),
+    };
+    const projectionDoc = {};
+    mongo.getConnection((db) => {
+        const todos = db.collection('todos');
+        todos.findOne(searchDoc, projectionDoc, (aerr, todo) => {
+            if (aerr) {
+                return callback(aerr, null);
+            }
+            if (!todo) {
+                return callback(new Error(`todo for id ${todoId} does not exist`, null));
+            }
             return Promise.all(todo.tg.map(x => tagService.getById(x)))
                 .then((tags) => {
                     const todoDetailed = {
@@ -74,6 +93,26 @@ function _getById(todoId, callback) {
 }
 
 function _getAllByState(isComplete, callback) {
+    const searchDoc = {
+        ic: isComplete,
+    };
+    const projectionDoc = {
+    };
+    const orderDoc = {
+        cra: -1,
+    };
+    mongo.getConnection((db) => {
+        const todos = db.collection('todos');
+        todos.find(searchDoc, projectionDoc).sort(orderDoc).toArray((aerr, allTodos) => {
+            if (aerr) {
+                return callback(aerr, null);
+            }
+            return callback(null, toHuman(allTodos, todoConverter));
+        });
+    });
+}
+
+function _getAllDetailedByState(isComplete, callback) {
     const searchDoc = {
         ic: isComplete,
     };
@@ -152,12 +191,36 @@ module.exports = {
         });
     },
 
+    getByIdDetailed(todoId, callback) {
+        if (typeof callback === 'function') {
+            return _getByIdDetailed(todoId, callback);
+        }
+        return new Promise((resolve, reject) => {
+            _getByIdDetailed(todoId, (aerr, todo) => {
+                if (aerr) return reject(aerr);
+                return resolve(todo);
+            });
+        });
+    },
+
     getAllByState(isComplete, callback) {
         if (typeof callback === 'function') {
             return _getAllByState(isComplete, callback);
         }
         return new Promise((resolve, reject) => {
             _getAllByState(isComplete, (aerr, todos) => {
+                if (aerr) return reject(aerr);
+                return resolve(todos);
+            });
+        });
+    },
+
+    getAllDetailedByState(isComplete, callback) {
+        if (typeof callback === 'function') {
+            return _getAllDetailedByState(isComplete, callback);
+        }
+        return new Promise((resolve, reject) => {
+            _getAllDetailedByState(isComplete, (aerr, todos) => {
                 if (aerr) return reject(aerr);
                 return resolve(todos);
             });

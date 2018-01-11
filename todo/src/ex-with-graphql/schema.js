@@ -19,6 +19,8 @@ const typeDefs = `
     type Query {
         todos(is_complete: Boolean!, limit: Int): [Todo]
         todo(id: String): Todo
+        tags: [Tag]
+        tag(id: String): [Tag]
     }
 
     type Mutation {
