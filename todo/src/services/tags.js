@@ -48,7 +48,7 @@ function _getById(tagId, callback) {
                 return callback(aerr, null);
             }
             if (!tag) {
-                return callback(new Error(`Tag with id ${tagId} does not exist`), null)
+                return callback(new Error(`Tag with id ${tagId} does not exist`), null);
             }
             return callback(null, toHuman(tag, tagConverter));
         });

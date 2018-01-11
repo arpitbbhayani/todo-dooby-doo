@@ -50,15 +50,25 @@ function _getById(todoId, callback) {
     const searchDoc = {
         _id: mongo.toObjectId(todoId),
     };
-    const projectionDoc = {
-    };
+    const projectionDoc = {};
     mongo.getConnection((db) => {
         const todos = db.collection('todos');
         todos.findOne(searchDoc, projectionDoc, (aerr, todo) => {
             if (aerr) {
                 return callback(aerr, null);
             }
-            return callback(null, toHuman(todo, todoConverter));
+            if (!todo) {
+                return callback(new Error(`todo for id ${todoId} does not exist`, null));
+            }
+            return Promise.all(todo.tg.map(x => tagService.getById(x)))
+                .then((tags) => {
+                    const todoDetailed = {
+                        ...todo,
+                        tg: tags,
+                    };
+                    return callback(null, toHuman(todoDetailed, todoConverter));
+                })
+                .catch(berr => callback(berr, null));
         });
     });
 }
@@ -78,7 +88,19 @@ function _getAllByState(isComplete, callback) {
             if (aerr) {
                 return callback(aerr, null);
             }
-            return callback(null, toHuman(allTodos, todoConverter));
+            const tagsToFetch = Array.from(new Set([].concat(...allTodos.map(t => t.tg))));
+            return Promise.all(tagsToFetch.map(t => tagService.getById(t)))
+                .then((tagsDetailsArray) => {
+                    const tagsDetailMap = {};
+                    for (let i = 0; i < tagsDetailsArray.length; i += 1) {
+                        tagsDetailMap[tagsDetailsArray[i].id] = tagsDetailsArray[i];
+                    }
+                    const allTodosWithDetails = allTodos.map(t => ({
+                        ...t,
+                        tg: t.tg.map(x => tagsDetailMap[x]),
+                    }));
+                    return callback(null, toHuman(allTodosWithDetails, todoConverter));
+                }).catch(berr => callback(berr, null));
         });
     });
 }

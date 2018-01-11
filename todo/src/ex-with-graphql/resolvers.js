@@ -9,7 +9,7 @@ const resolvers = {
         createTodo: (_, { todo, tags }) => {
             const todoDoc = {
                 t: todo,
-                tg: tags
+                tg: tags,
             };
             return todosService.create(todoDoc);
         },
