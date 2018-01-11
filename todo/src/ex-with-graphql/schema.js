@@ -2,12 +2,18 @@ const resolvers = require('./resolvers');
 const { makeExecutableSchema } = require('graphql-tools');
 
 const typeDefs = `
+    type Tag {
+        id: String
+        name: String
+        color: String
+    }
+
     type Todo {
         id: String
         todo: String
         created_at: String
         is_complete: Boolean
-        tags: [String]
+        tags: [Tag]
     }
 
     type Query {
@@ -16,7 +22,7 @@ const typeDefs = `
     }
 
     type Mutation {
-        createTodo(todo: String!): Todo
+        createTodo(todo: String!, tags: [String]): Todo
     }
 `;
 

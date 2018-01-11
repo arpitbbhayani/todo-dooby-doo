@@ -1,4 +1,5 @@
 const mongo = require('../db/mongo');
+const tagService = require('../services/tags');
 const Promise = require('bluebird');
 
 function todoConverter(x) {
@@ -20,25 +21,29 @@ function toHuman(obj, fn) {
 
 function _create(todoDoc, callback) {
     const currentDate = new Date();
-    const insertDoc = {
-        t: todoDoc.t,
-        cra: currentDate,
-        ic: false,
-        tg: todoDoc.tg.filter(x => x),
-    };
-    mongo.getConnection((db) => {
-        const todos = db.collection('todos');
-        todos.insertOne(insertDoc, (aerr, result) => {
-            if (aerr) {
-                return callback(aerr, null);
-            }
-            const todoInfo = {
-                _id: result.insertedId,
-                ...insertDoc,
+    Promise.all(todoDoc.tg.filter(x => x).map(x => tagService.getById(x)))
+        .then((tags) => {
+            const insertDoc = {
+                t: todoDoc.t,
+                cra: currentDate,
+                ic: false,
+                tg: tags.map(x => x.id),
             };
-            return callback(null, toHuman(todoInfo, todoConverter));
-        });
-    });
+            mongo.getConnection((db) => {
+                const todos = db.collection('todos');
+                todos.insertOne(insertDoc, (aerr, result) => {
+                    if (aerr) {
+                        return callback(aerr, null);
+                    }
+                    const todoInfo = {
+                        _id: result.insertedId,
+                        ...insertDoc,
+                        tg: tags,
+                    };
+                    return callback(null, toHuman(todoInfo, todoConverter));
+                });
+            });
+        }).catch(aerr => callback(aerr, null));
 }
 
 function _getById(todoId, callback) {

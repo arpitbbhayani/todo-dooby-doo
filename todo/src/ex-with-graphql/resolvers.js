@@ -6,9 +6,10 @@ const resolvers = {
         todo: (_, args) => todosService.getById(args.id),
     },
     Mutation: {
-        createTodo: (_, { todo }) => {
+        createTodo: (_, { todo, tags }) => {
             const todoDoc = {
                 t: todo,
+                tg: tags
             };
             return todosService.create(todoDoc);
         },
