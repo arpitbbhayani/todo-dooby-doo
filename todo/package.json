@@ -1,0 +1,40 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "todo",
+  "main": "./dist/app.js",
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint src --fix",
+    "build": "./node_modules/.bin/babel src -d dist",
+    "build-dev": "./node_modules/.bin/babel src -d dist -w",
+    "copy-statics": "cpx \"./src/views/**/*\" ./dist/views",
+    "copy-statics-dev": "cpx \"./src/views/**/*\" ./dist/views --watch",
+    "run-dev": "NODE_CONFIG_DIR=./src/config ./node_modules/.bin/nodemon ./dist/app.js"
+  },
+  "author": "Arpit Bhayani",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server-express": "^1.3.2",
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
+    "config": "^1.26.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.2",
+    "express-handlebars": "^3.0.0",
+    "graphql": "^0.12.3",
+    "graphql-tools": "^2.16.0",
+    "mongodb": "^2.2.31",
+    "superagent": "^3.6.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "cpx": "^1.5.0",
+    "eslint": "^4.12.0",
+    "eslint-config-airbnb-base": "^12.0.0",
+    "eslint-plugin-import": "^2.7.0",
+    "nodemon": "^1.12.1"
+  }
+}

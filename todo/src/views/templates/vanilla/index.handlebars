@@ -1,0 +1,45 @@
+<div class="ui text container">
+    <form class="ui form" action="/vanilla/todos" method="POST">
+        <div class="ui fluid input input field">
+            <textarea rows="5" name="todo" placeholder="What do you want to do today?"></textarea>
+        </div>
+        <div class="ui field">
+            <div class="ui nospace borderless right aligned segment">
+                <button type="submit" class="ui primary button">Create</button>
+            </div>
+        </div>
+    </form>
+    <div class="ui secondary menu">
+        <a href="/vanilla" class="ui {{#if incomplete}}active{{/if}} item">
+            Todo
+        </a>
+        <a href="/vanilla/completed" class="ui {{#if complete}}active{{/if}} item">
+            Completed
+        </a>
+    </div>
+    {{#each todos}}
+        <div class="ui segment">
+            <div class="ui right aligned nospace borderless segment">
+                {{#if this.is_complete}}
+                    <form class="ui form" method="POST" action="/vanilla/todos/{{this.id}}/incomplete">
+                        <div class="ui field">
+                            <button type="submit" class="ui mini button">
+                                Mark as Inomplete
+                            </button>
+                        </div>
+                    </form>
+                {{else}}
+                    <form class="ui form" method="POST" action="/vanilla/todos/{{this.id}}/complete">
+                        <div class="ui field">
+                            <button type="submit" class="ui mini button">
+                                Mark as Complete
+                            </button>
+                        </div>
+                    </form>
+                {{/if}}
+            </div>
+            <div>{{this.todo}}</div>
+            <div class="ui mini text">Posted on: {{this.created_at}}</div>
+        </div>
+    {{/each}}
+</div>

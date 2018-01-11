@@ -1,0 +1,20 @@
+<div class="ui text container">
+    <form class="ui form" onsubmit="createTodo(this); return false;" method="POST">
+        <div class="ui fluid input input field">
+            <textarea rows="5" name="todo" placeholder="What do you want to do today?"></textarea>
+        </div>
+        <div class="ui field">
+            <div class="ui nospace borderless right aligned segment">
+                <button type="submit" class="ui primary button">Create</button>
+            </div>
+        </div>
+    </form>
+    <div class="ui secondary menu">
+        <a href="/ex-with-graphql" class="ui item">
+            Todo
+        </a>
+        <a href="/ex-with-graphql/completed" class="ui item">
+            Completed
+        </a>
+    </div>
+</div>
