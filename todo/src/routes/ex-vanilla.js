@@ -26,7 +26,7 @@ router.get('/completed', (req, res, next) => {
         res.render('ex-vanilla/index', {
             todos,
             tags,
-            incomplete: true,
+            complete: true,
         });
     }).catch(aerr => next(aerr));
 });
