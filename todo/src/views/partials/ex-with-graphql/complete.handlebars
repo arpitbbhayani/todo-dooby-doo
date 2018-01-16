@@ -1,0 +1,20 @@
+<pre id="completeTodos">
+</pre>
+
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: '/ex-with-graphql/api?',
+            type: 'POST',
+            data: JSON.stringify(QUERIES.getCompleteTodos),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function(response) {
+                renderTodos(
+                    document.getElementById('completeTodos'),
+                    response.data
+                );
+            }
+        });
+    });
+</script>

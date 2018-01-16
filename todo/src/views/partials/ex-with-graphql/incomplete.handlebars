@@ -1,0 +1,20 @@
+<pre id="incompleteTodos">
+</pre>
+
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: '/ex-with-graphql/api?',
+            type: 'POST',
+            data: JSON.stringify(QUERIES.getIncompleteTodos),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function(response) {
+                renderTodos(
+                    document.getElementById('incompleteTodos'),
+                    response.data
+                );
+            }
+        });
+    });
+</script>

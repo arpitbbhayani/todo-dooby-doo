@@ -1,10 +1,81 @@
+<script>
+function renderTodos(element, todos) {
+    element.innerHTML = JSON.stringify(todos, null, 4);
+}
+
+var QUERIES = {
+    getCompleteTodos: {
+        query: "{todos(is_complete: true) {id, todo, tags {id, name}}}"
+    },
+    getIncompleteTodos: {
+        query: "{todos(is_complete: false) {id, todo, tags {id, name}}}"
+    },
+    createTodo: function(todo, tags) {
+        return {
+            query: "mutation createTodo($todo: String!, $tags: [String]) { createTodo(todo: $todo, tags: $tags) { id } }",
+            variables: {
+                todo: todo,
+                tags: tags,
+            }
+        };
+    },
+    getTags: {
+        query: "{ tags {id, name, color} }"
+    }
+}
+
+function createTodoGraphQL(form) {
+    var todo = form.elements.todo.value;
+    var tags = [form.elements.tag1.value, form.elements.tag2.value, form.elements.tag3.value];
+
+    $.ajax({
+        url: '/ex-with-graphql/api?',
+        type: 'POST',
+        data: JSON.stringify(QUERIES.createTodo(todo, tags)),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function(response) {
+            window.location = '/ex-with-graphql';
+        }
+    });
+}
+
+</script>
+
 <div class="ui text container">
     <div class="ui right aligned basic nospace segment">
+        <a href="/ex-with-graphql/tags">Tags</a>
         <a href="/ex-with-graphql/graphiql" target="_blank">Open Graphiql</a>
     </div>
-    <form class="ui form" onsubmit="createTodo(this); return false;" method="POST">
-        <div class="ui fluid input input field">
+    <form class="ui form" onsubmit="createTodoGraphQL(this); return false;" method="POST">
+        <div class="ui fluid input field">
             <textarea rows="5" name="todo" placeholder="What do you want to do today?"></textarea>
+        </div>
+        <div class="ui three fields">
+            <div class="ui fluid field">
+                <div class="ui selection dropdown">
+                    <input id="tag1" name="tag1" type="hidden">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Tag</div>
+                    <div class="menu"></div>
+                </div>
+            </div>
+            <div class="ui fluid field">
+                <div class="ui selection dropdown">
+                    <input id="tag2" name="tag2" type="hidden">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Tag</div>
+                    <div class="menu"></div>
+                </div>
+            </div>
+            <div class="ui fluid field">
+                <div class="ui selection dropdown">
+                    <input id="tag3" name="tag3" type="hidden">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Tag</div>
+                    <div class="menu"></div>
+                </div>
+            </div>
         </div>
         <div class="ui field">
             <div class="ui nospace borderless right aligned segment">
@@ -13,11 +84,52 @@
         </div>
     </form>
     <div class="ui secondary menu">
-        <a href="/ex-with-graphql" class="ui item">
+        <a href="/ex-with-graphql" class="ui {{#if incomplete}}active{{/if}} item">
             Todo
         </a>
-        <a href="/ex-with-graphql/completed" class="ui item">
+        <a href="/ex-with-graphql/completed" class="ui {{#if complete}}active{{/if}} item">
             Completed
         </a>
     </div>
+    {{#if complete}}
+        {{> ex-with-graphql/complete }}
+    {{/if}}
+
+    {{#if incomplete}}
+        {{> ex-with-graphql/incomplete }}
+    {{/if}}
 </div>
+
+
+<script>
+function loadTagsInDropdowns(dropdownIds) {
+    $.ajax({
+        url: '/ex-with-graphql/api?',
+        type: 'POST',
+        data: JSON.stringify(QUERIES.getTags),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function(response) {
+            var tags = response.data.tags;
+            var tagDropdownItemsHTML = "";
+            for (var i = 0; i < tags.length; i++ ) {
+                var tag = tags[i];
+                tagDropdownItemsHTML += '\
+                    <div class="item" data-value="' + tag.id + '">\
+                        <span class="ui mini label"\
+                        style="background-color: ' + tag.color + '">\
+                        </span> ' + tag.name + '</div>';
+            }
+
+            for (var i = 0; i < dropdownIds.length; i++) {
+                var dElement = document.getElementById(dropdownIds[i]);
+                $(dElement).siblings('.menu').html(tagDropdownItemsHTML);
+            }
+        }
+    });
+};
+
+$(document).ready(function() {
+    loadTagsInDropdowns(['tag1', 'tag2', 'tag3'])
+});
+</script>
